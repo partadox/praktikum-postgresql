@@ -120,18 +120,20 @@ Arta Kusuma Hernanda
 ## Asisten praktikum
 <details>
   <summary>2025/2024 Genap</summary>
-
-5024211001 - Reza Ali Nirwansyah
-5024211004 - Kenanya Keandra Adriel Prasetyo
-5024211005 - Sulthan Daffa Arif Mahmudi
-5024211013 - Annafi Nur Jayani
-5024221001 - Rezky Dwisantika Pujiastuti
-5024221011 - Farrell Rafee Sudjatmiko
-5024221023 - Hendrich Ardthian Breshman Panjaitan
-5024221052 - Pranaditya Tri Jyotista Vavitram Putra Sudana
-5024221058 - Rigel Ramadhani Waloni
-5024221064 - Ahmad Wildan Syahputra
-5024221066 - Imanuel Daulat Satrio Utomo Siahaan
-5024221067 - Adhitya Raufarhan Sukmana
-
+  
+  1. 5024211001 - Reza Ali Nirwansyah
+  2. 5024211004 - Kenanya Keandra Adriel Prasetyo
+  3. 5024211005 - Sulthan Daffa Arif Mahmudi
+  4. 5024211013 - Annafi Nur Jayani
+  5. 5024221001 - Rezky Dwisantika Pujiastuti
+  6. 5024221011 - Farrell Rafee Sudjatmiko
+  7. 5024221023 - Hendrich Ardthian Breshman Panjaitan
+  8. 5024221052 - Pranaditya Tri Jyotista Vavitram Putra Sudana
+  9. 5024221058 - Rigel Ramadhani Waloni
+  10. 5024221064 - Ahmad Wildan Syahputra
+  11. 5024221066 - Imanuel Daulat Satrio Utomo Siahaan
+  12. 5024221067 - Adhitya Raufarhan Sukmana
 </details>
+
+## Peserta
+- [2025/2024 Genap](https://docs.google.com/spreadsheets/d/1laOQjuMvkfZmDMm7riRumSdqZqGLElz9pLVCdqsBnwo/edit?gid=0#gid=0)
