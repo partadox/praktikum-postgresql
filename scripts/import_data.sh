@@ -17,8 +17,8 @@ import_csv() {
     local file=$2
     echo "Importing $file to $table table..."
     
-    # Gunakan COPY command untuk import data lebih cepat
-    PGPASSWORD=$DB_PASS psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c "\COPY $table FROM '$file' CSV HEADER;"
+    # Gunakan Docker untuk menjalankan COPY command
+    docker-compose -f ../docker-compose.yml exec -T postgres psql -U $DB_USER -d $DB_NAME -c "\COPY $table FROM '/data/$file' CSV HEADER;"
     
     if [ $? -eq 0 ]; then
         echo "Successfully imported $file"
@@ -31,16 +31,16 @@ import_csv() {
 # Import semua file CSV
 echo "Starting data import..."
 
-import_csv "products" "$DATA_DIR/products.csv"
-import_csv "customers" "$DATA_DIR/customers.csv"
-import_csv "orders" "$DATA_DIR/orders.csv"
-import_csv "order_items" "$DATA_DIR/order_items.csv"
-import_csv "bank_accounts" "$DATA_DIR/bank_accounts.csv"
+import_csv "products" "products.csv"
+import_csv "customers" "customers.csv"
+import_csv "orders" "orders.csv"
+import_csv "order_items" "order_items.csv"
+import_csv "bank_accounts" "bank_accounts.csv"
 
 echo "Data import completed successfully!"
 
 # Analyze database untuk update statistik
 echo "Analyzing database..."
-PGPASSWORD=$DB_PASS psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c "ANALYZE;"
+docker-compose -f ../docker-compose.yml exec -T postgres psql -U $DB_USER -d $DB_NAME -c "ANALYZE;"
 
 echo "Database is ready for practical sessions!"

@@ -78,7 +78,7 @@ bash import_data.sh
    - Username: praktikan
    - Password: p4ssw0rd
 
-## Cara Menggunakan Praktikum
+## Cara Menggunakan Modul Praktikum
 
 Setiap modul praktikum memiliki:
 - README.md dengan penjelasan konsep dan langkah-langkah
@@ -94,7 +94,6 @@ Ikuti langkah-langkah dalam README.md setiap modul praktikum secara berurutan.
 3. Asisten praktikum akan mengawasi dan membantu selama praktikum
 4. Setiap kelompok membuat laporan akhir berisi:
    - Jawaban tugas dari setiap modul
-   - Jawaban pertanyaan diskusi
    - Analisis dan kesimpulan
 
 ## Tentang Data
@@ -117,3 +116,22 @@ Data ini memungkinkan pengujian performa dan konkurensi yang realistis.
 
 ## Modul Author
 Arta Kusuma Hernanda
+
+## Asisten praktikum
+<details>
+  <summary>2025/2024 Genap</summary>
+
+5024211001 - Reza Ali Nirwansyah
+5024211004 - Kenanya Keandra Adriel Prasetyo
+5024211005 - Sulthan Daffa Arif Mahmudi
+5024211013 - Annafi Nur Jayani
+5024221001 - Rezky Dwisantika Pujiastuti
+5024221011 - Farrell Rafee Sudjatmiko
+5024221023 - Hendrich Ardthian Breshman Panjaitan
+5024221052 - Pranaditya Tri Jyotista Vavitram Putra Sudana
+5024221058 - Rigel Ramadhani Waloni
+5024221064 - Ahmad Wildan Syahputra
+5024221066 - Imanuel Daulat Satrio Utomo Siahaan
+5024221067 - Adhitya Raufarhan Sukmana
+
+</details>

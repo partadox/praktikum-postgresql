@@ -63,11 +63,21 @@ with open(os.path.join(OUTPUT_DIR, "customers.csv"), "w", newline="", encoding="
     writer.writerow(["customer_id", "first_name", "last_name", "email", "phone", 
                     "address", "city", "country", "postal_code", "created_at"])
     
+    # Set untuk melacak email yang sudah digunakan
+    used_emails = set()
+    
     for i in range(1, NUM_CUSTOMERS + 1):
         customer_id = i
         first_name = fake.first_name()
         last_name = fake.last_name()
-        email = fake.email()
+        
+        # Pastikan email unik
+        while True:
+            email = f"{first_name.lower()}.{last_name.lower()}{i}@{fake.domain_name()}"
+            if email not in used_emails:
+                used_emails.add(email)
+                break
+        
         phone = fake.phone_number()
         address = fake.street_address()
         city = fake.city()
