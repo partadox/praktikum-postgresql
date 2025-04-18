@@ -59,6 +59,8 @@ Parameter:
 
 - Pastikan container PostgreSQL sudah berjalan sebelum menjalankan script import atau benchmark
 - Script ini didesain untuk berjalan di lingkungan Linux/Unix. Untuk Windows, gunakan Git Bash, WSL, atau Docker
+- Ketika anda menjalankan bash script perhatikan format enter pada editor anda
+- Akses container postgres anda, copy file yang diperlukan kedalam container anda sehingga anda bisa eksekusi command dan menjalankan script benchmark.
 
 ## Dependensi
 

@@ -14,8 +14,23 @@ Pada praktikum ini, kita akan mempelajari implementasi indexing pada PostgreSQL 
 ### 1. Persiapan
 
 1. Pastikan container Docker PostgreSQL sudah berjalan
-2. Gunakan pgAdmin atau PSQL untuk mengakses database
-3. Pastikan data sudah diimpor menggunakan script yang disediakan
+2. Pastikan data sudah diimpor menggunakan script yang disediakan
+3. Anda perlu akses shell container untuk dan copy script serta file .sql kedalam container.  
+
+Berikut docker command yang diperlukan.
+```bash
+# Mencari ID / nama container PostgreSQL
+docker ps
+
+#Akses Shell container
+docker exec -it [container_id_atau_nama] bash
+
+# Akses PostgreSQL CLI (psql)
+psql -U [username] -d [database_name]
+
+#Salin file ke docker
+docker cp /path/to/your/local/yourFile [container_id_atau_nama]:/pathDiContainer/
+```
 
 ### 2. Mengeksplorasi Execution Plan
 
@@ -59,11 +74,10 @@ ORDER BY total_products DESC;
 ```
 
 2. Lakukan benchmark konkuren tanpa index:
-
 ```bash
-# Di terminal
-cd scripts
-bash benchmark.sh ../praktikum/praktikum1_indexing/query_before.sql 20 100 10
+# Command
+cd toYourPath
+bash benchmark.sh query_before.sql 20 100 10
 ```
 
 ### 4. Implementasi Index yang Tepat
@@ -107,8 +121,8 @@ EXPLAIN ANALYZE SELECT COUNT(*) FROM products WHERE category = 'Elektronik';
 
 ```bash
 # Di terminal
-cd scripts
-bash benchmark.sh ../praktikum/praktikum1_indexing/query_after.sql 20 100 10
+cd toYourPath
+bash benchmark.sh query_after.sql 20 100 10
 ```
 
 ### 6. Mempelajari Tipe Index Lain

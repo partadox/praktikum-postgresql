@@ -1,0 +1,37 @@
+\babel@toc {bahasa}{}
+\contentsline {chapter}{Kata Pengantar}{1}{chapter*.1}%
+\contentsline {chapter}{Persiapan Praktikum}{4}{chapter*.3}%
+\contentsline {section}{\numberline {1}Deskripsi Praktikum}{4}{section.0.1}%
+\contentsline {section}{\numberline {2}Persiapan Environment}{4}{section.0.2}%
+\contentsline {subsection}{\numberline {2.1}Menggunakan Docker}{4}{subsection.0.2.1}%
+\contentsline {section}{\numberline {3}Petunjuk Penggunaan Modul}{5}{section.0.3}%
+\contentsline {section}{\numberline {4}Panduan Pengerjaan}{6}{section.0.4}%
+\contentsline {section}{\numberline {5}Struktur Folder Praktikum}{6}{section.0.5}%
+\contentsline {section}{\numberline {6}Dataset Praktikum}{6}{section.0.6}%
+\contentsline {section}{\numberline {7}Referensi}{7}{section.0.7}%
+\contentsline {chapter}{\numberline {1}Implementasi Indexing pada PostgreSQL}{8}{chapter.1}%
+\contentsline {section}{\numberline {1}Pendahuluan}{8}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1}Tujuan Praktikum}{8}{subsection.1.1.1}%
+\contentsline {section}{\numberline {2}Konsep Dasar Indexing}{9}{section.1.2}%
+\contentsline {subsection}{\numberline {2.1}Apa itu Index?}{9}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {2.2}Bagaimana Index Bekerja}{9}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {2.3}Kapan Menggunakan Index}{9}{subsection.1.2.3}%
+\contentsline {subsection}{\numberline {2.4}Kapan Tidak Menggunakan Index}{9}{subsection.1.2.4}%
+\contentsline {subsection}{\numberline {2.5}Dampak Index pada Performa}{10}{subsection.1.2.5}%
+\contentsline {section}{\numberline {3}Jenis-jenis Index di PostgreSQL}{10}{section.1.3}%
+\contentsline {subsection}{\numberline {3.1}B-tree Index}{10}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {3.2}Hash Index}{10}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {3.3}GiST Index (Generalized Search Tree)}{11}{subsection.1.3.3}%
+\contentsline {subsection}{\numberline {3.4}GIN Index (Generalized Inverted Index)}{11}{subsection.1.3.4}%
+\contentsline {subsection}{\numberline {3.5}BRIN Index (Block Range INdex)}{11}{subsection.1.3.5}%
+\contentsline {subsection}{\numberline {3.6}SP-GiST Index (Space-Partitioned GiST)}{11}{subsection.1.3.6}%
+\contentsline {subsection}{\numberline {3.7}Benchmark pada Konkurensi Tinggi}{12}{subsection.1.3.7}%
+\contentsline {section}{\numberline {4}Best Practices Implementasi Indexing}{12}{section.1.4}%
+\contentsline {section}{\numberline {5}Tahapan Praktikum}{13}{section.1.5}%
+\contentsline {subsection}{\numberline {5.1}Persiapan}{13}{subsection.1.5.1}%
+\contentsline {subsection}{\numberline {5.2}Mengeksplorasi Execution Plan}{13}{subsection.1.5.2}%
+\contentsline {subsection}{\numberline {5.3}Mengukur Performa Query Tanpa Index}{13}{subsection.1.5.3}%
+\contentsline {subsection}{\numberline {5.4}Implementasi Index yang Tepat}{14}{subsection.1.5.4}%
+\contentsline {subsection}{\numberline {5.5}Mengukur Performa Setelah Indexing}{15}{subsection.1.5.5}%
+\contentsline {subsection}{\numberline {5.6}Mempelajari Tipe Index Lain}{15}{subsection.1.5.6}%
+\contentsline {section}{\numberline {6}Referensi}{16}{section.1.6}%
