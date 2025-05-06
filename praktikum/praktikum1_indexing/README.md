@@ -15,9 +15,10 @@ Pada praktikum ini, kita akan mempelajari implementasi indexing pada PostgreSQL 
 
 1. Pastikan container Docker PostgreSQL sudah berjalan
 2. Pastikan data sudah diimpor menggunakan script yang disediakan
-3. Anda perlu akses shell container untuk dan copy script serta file .sql kedalam container.  
+3. Anda perlu akses shell container untuk dan copy script serta file .sql kedalam container.
 
 Berikut docker command yang diperlukan.
+
 ```bash
 # Mencari ID / nama container PostgreSQL
 docker ps
@@ -56,14 +57,14 @@ SELECT COUNT(*) FROM products WHERE category = 'Elektronik';
 SELECT * FROM products WHERE price BETWEEN 1000000 AND 5000000;
 
 -- Query 3: Filter berdasarkan tanggal pesanan
-SELECT o.order_id, o.customer_id, o.order_date 
-FROM orders o 
+SELECT o.order_id, o.customer_id, o.order_date
+FROM orders o
 WHERE o.order_date BETWEEN '2023-06-01' AND '2023-06-30';
 
 -- Query 4: Join tanpa index
 SELECT c.first_name, c.last_name, o.order_id, o.order_date, o.total_amount
-FROM customers c 
-JOIN orders o ON c.customer_id = o.customer_id 
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
 WHERE c.city = 'Jakarta';
 
 -- Query 5: Aggregate yang berat
@@ -74,23 +75,26 @@ ORDER BY total_products DESC;
 ```
 
 2. Lakukan benchmark konkuren tanpa index:
+
 ```bash
 # Command
 cd toYourPath
-bash benchmark.sh query_before.sql 20 100 10
+bash benchmark.sh queries.sql 20 100 10
 ```
 
-### 4. Implementasi Index yang Tepat
-
-Sekarang, tambahkan index yang sesuai untuk setiap query:
+### 4. Implementasi Drop and Create Index yang Tepat
 
 ```sql
--- Hapus index yang sudah ada (untuk tujuan praktikum)
+-- Hapus index yang sudah ada (untuk tujuan menguji kembali tanpa index)
 DROP INDEX IF EXISTS idx_products_category;
 DROP INDEX IF EXISTS idx_products_price;
 DROP INDEX IF EXISTS idx_orders_date;
 DROP INDEX IF EXISTS idx_customers_city;
+```
 
+Menambahkan index yang sesuai untuk setiap query:
+
+```sql
 -- Index 1: B-Tree index untuk kategori produk
 CREATE INDEX idx_products_category ON products(category);
 
@@ -109,20 +113,12 @@ CREATE INDEX idx_orders_customer_id ON orders(customer_id);
 
 ### 5. Mengukur Performa Setelah Indexing
 
-1. Jalankan kembali query yang sama dan bandingkan waktu eksekusinya:
-
-```sql
--- Jalankan semua query yang sama seperti sebelumnya dan bandingkan execution plan
-EXPLAIN ANALYZE SELECT COUNT(*) FROM products WHERE category = 'Elektronik';
--- dan seterusnya untuk query lainnya
-```
-
-2. Lakukan benchmark konkuren dengan index:
+1. Lakukan benchmark konkuren dengan index:
 
 ```bash
 # Di terminal
 cd toYourPath
-bash benchmark.sh query_after.sql 20 100 10
+bash benchmark.sh queries.sql 20 100 10
 ```
 
 ### 6. Mempelajari Tipe Index Lain
@@ -131,7 +127,7 @@ PostgreSQL mendukung beberapa tipe index. Cobalah implementasi berikut:
 
 ```sql
 -- Index Partial untuk produk dengan stok rendah
-CREATE INDEX idx_products_low_stock ON products(product_id, stock_quantity) 
+CREATE INDEX idx_products_low_stock ON products(product_id, stock_quantity)
 WHERE stock_quantity < 10;
 
 -- Index menggunakan ekspresi untuk pencarian case-insensitive
@@ -141,7 +137,7 @@ CREATE INDEX idx_products_name_lower ON products(LOWER(name));
 CREATE INDEX idx_orders_date_brin ON orders USING BRIN(order_date);
 
 -- GIN Index untuk pencarian full-text (jika menggunakan PostgreSQL >= 9.6)
-CREATE INDEX idx_products_description_gin ON products 
+CREATE INDEX idx_products_description_gin ON products
 USING GIN(to_tsvector('english', description));
 ```
 
