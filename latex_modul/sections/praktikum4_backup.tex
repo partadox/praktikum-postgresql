@@ -1,0 +1,321 @@
+\chapter{Backup dan Recovery pada PostgreSQL}
+\setcounter{section}{0}
+\section{Pendahuluan}
+Backup dan recovery merupakan aspek kritis dalam pengelolaan database. Sebagai database administrator, melindungi data dari kehilangan dan kerusakan merupakan tanggung jawab utama. PostgreSQL menyediakan beragam metode backup dan recovery yang dapat disesuaikan dengan kebutuhan sistem, batasan operasional, dan tujuan bisnis.
+
+Strategi backup dan recovery yang tepat menjamin ketahanan (resilience) dan ketersediaan (availability) sistem database. Dalam lingkungan produksi, kemampuan untuk memulihkan data dengan cepat dan akurat saat terjadi kegagalan sistem, kesalahan manusia, atau bencana dapat menjadi perbedaan antara operasi bisnis yang berkelanjutan dan kerugian finansial yang signifikan.
+
+\subsection{Tujuan Praktikum}
+Dilaksanakannya praktikum backup dan recovery, praktikan diharapkan mampu:
+\begin{enumerate}
+    \item Memahami konsep backup dan recovery pada database
+    \item Mengimplementasikan berbagai tipe backup di PostgreSQL
+    \item Melakukan recovery data dari backup
+    \item Menerapkan strategi backup yang tepat sesuai kebutuhan
+\end{enumerate}
+
+\section{Konsep Dasar Backup dan Recovery}
+
+\subsection{Terminologi dan Konsep Kunci}
+\begin{enumerate}
+    \item \textbf{Backup}: Proses membuat salinan data untuk pemulihan jika terjadi kehilangan data
+    \item \textbf{Recovery}: Proses memulihkan database ke keadaan yang konsisten menggunakan data backup
+    \item \textbf{Recovery Point Objective (RPO)}: Jumlah maksimal data yang dapat hilang, diukur dalam waktu
+    \item \textbf{Recovery Time Objective (RTO)}: Waktu maksimal yang diperbolehkan untuk memulihkan sistem
+    \item \textbf{Full Backup}: Backup seluruh database
+    \item \textbf{Incremental Backup}: Backup hanya perubahan sejak backup terakhir
+    \item \textbf{Differential Backup}: Backup perubahan sejak full backup terakhir
+    \item \textbf{Point-in-Time Recovery (PITR)}: Kemampuan memulihkan ke titik waktu tertentu
+\end{enumerate}
+
+\subsection{Tipe-tipe Backup di PostgreSQL}
+PostgreSQL menyediakan beberapa metode backup yang dapat digunakan sesuai kebutuhan:
+
+\begin{enumerate}
+    \item \textbf{Logical Backup}: 
+    \begin{itemize}
+        \item Menggunakan utilitas \texttt{pg\_dump} dan \texttt{pg\_dumpall}
+        \item Menghasilkan file SQL atau format khusus yang berisi perintah untuk merekonstruksi database
+        \item Fleksibel dan dapat dipulihkan secara selektif
+        \item Cocok untuk database kecil hingga menengah
+    \end{itemize}
+    
+    \item \textbf{Physical Backup}:
+    \begin{itemize}
+        \item Salinan langsung dari file data PostgreSQL
+        \item Lebih cepat untuk database besar
+        \item Membutuhkan akses ke sistem file
+        \item Membutuhkan penghentian database atau konsistensi filesystem
+    \end{itemize}
+    
+    \item \textbf{Continuous Archiving}:
+    \begin{itemize}
+        \item Menggunakan Write-Ahead Logs (WAL) untuk mencatat semua perubahan
+        \item Memungkinkan Point-in-Time Recovery (PITR)
+        \item Kombinasi dari base backup dan WAL archives
+        \item Cocok untuk database dengan zero/minimal data loss requirement
+    \end{itemize}
+\end{enumerate}
+
+\begin{figure}[h]
+	\centering
+	\begin{tabular}{|l|p{4cm}|p{4cm}|p{4cm}|}
+		\hline
+		\textbf{Aspek} & \textbf{Logical Backup} & \textbf{Physical Backup} & \textbf{Continuous Archiving} \\
+		\hline
+		Metode & pg\_dump, pg\_dumpall & File system backup & Base backup + WAL archiving \\
+		\hline
+		Kelebihan & Selektif, platform-independent, dapat restore sebagian & Cepat untuk database besar, overhead rendah & Point-in-time recovery, minimal data loss \\
+		\hline
+		Kekurangan & Lambat untuk database besar, overhead tinggi & Tidak selektif, platform-dependent & Kompleksitas setup, kebutuhan penyimpanan tinggi \\
+		\hline
+		Ideal untuk & Database kecil-menengah, backup selektif & Database besar, full restore cepat & Sistem kritikal, zero data loss requirement \\
+		\hline
+	\end{tabular}
+	\caption{Perbandingan Tipe Backup di PostgreSQL}
+\end{figure}
+
+\section{Strategi Backup yang Efektif}
+
+\subsection{Faktor yang Mempengaruhi Strategi Backup}
+\begin{enumerate}
+    \item \textbf{Volume Data}: Ukuran database mempengaruhi waktu backup dan storage requirements
+    \item \textbf{Window Backup}: Periode waktu yang tersedia untuk melakukan backup
+    \item \textbf{RPO dan RTO}: Persyaratan bisnis untuk toleransi kehilangan data dan waktu pemulihan
+    \item \textbf{Resource Constraints}: Keterbatasan penyimpanan, CPU, dan bandwith jaringan
+    \item \textbf{Frekuensi Perubahan}: Seberapa sering dan banyak data berubah
+    \item \textbf{Retensi Backup}: Berapa lama backup harus disimpan
+\end{enumerate}
+
+\subsection{Rekomendasi Best Practices}
+\begin{enumerate}
+    \item \textbf{Redundansi}: Simpan beberapa salinan backup di lokasi berbeda
+    \item \textbf{Verifikasi Backup}: Secara teratur menguji integritas backup dengan test restore
+    \item \textbf{Otomatisasi}: Jadwalkan backup secara reguler menggunakan cron jobs atau tools
+    \item \textbf{Monitoring}: Pantau proses backup dan segera tangani kegagalan
+    \item \textbf{Dokumentasi}: Dokumentasikan prosedur backup dan recovery secara detail
+    \item \textbf{Enkripsi}: Lindungi data backup dengan enkripsi jika berisi informasi sensitif
+    \item \textbf{Rotasi Backup}: Implementasikan strategi rotasi untuk mengoptimalkan penyimpanan
+    \item \textbf{Strategi Berlapis}: Kombinasikan beberapa metode backup (misal: full backup mingguan + incremental harian + continuous archiving)
+\end{enumerate}
+
+\section{Tahapan Praktikum}
+
+\subsection{Persiapan}
+\begin{enumerate}
+	\item Pastikan container Docker PostgreSQL sudah berjalan
+	\item Gunakan pgAdmin atau PSQL untuk mengakses database
+	\item Pastikan data sudah diimpor menggunakan script yang disediakan
+\end{enumerate}
+
+\subsection{Logical Backup dengan pg\_dump}
+Mari kita mulai dengan melakukan logical backup menggunakan pg\_dump:
+
+\subsubsection{Backup Database Lengkap}
+\begin{lstlisting}[language=bash]
+	# Format SQL
+	pg_dump -h localhost -p 5432 -U praktikan -d ecommerce -f ecommerce_full.sql
+	
+	# Format Custom (untuk restore selektif)
+	pg_dump -h localhost -p 5432 -U praktikan -d ecommerce -Fc -f ecommerce_full.dump
+	
+	# Format Directory (paralel backup)
+	pg_dump -h localhost -p 5432 -U praktikan -d ecommerce -Fd -j 4 -f ecommerce_backup_dir
+\end{lstlisting}
+
+\subsubsection{Backup Tabel Tertentu}
+\begin{lstlisting}[language=bash]
+	# Backup hanya tabel orders dan order_items
+	pg_dump -h localhost -p 5432 -U praktikan -d ecommerce -t orders -t order_items -f orders_backup.sql
+\end{lstlisting}
+
+\subsubsection{Backup Schema Saja}
+\begin{lstlisting}[language=bash]
+	# Backup struktur tanpa data
+	pg_dump -h localhost -p 5432 -U praktikan -d ecommerce --schema-only -f ecommerce_schema.sql
+\end{lstlisting}
+
+\subsubsection{Backup Data Saja}
+\begin{lstlisting}[language=bash]
+	# Backup data tanpa struktur
+	pg_dump -h localhost -p 5432 -U praktikan -d ecommerce --data-only -f ecommerce_data.sql
+\end{lstlisting}
+
+\subsection{Restore dari Logical Backup}
+Setelah melakukan backup, kita juga perlu tahu cara melakukan restore:
+
+\subsubsection{Restore Database Lengkap}
+\begin{lstlisting}[language=bash]
+	# Restore dari format SQL
+	psql -h localhost -p 5432 -U praktikan -d ecommerce_restore -f ecommerce_full.sql
+	
+	# Restore dari format Custom
+	pg_restore -h localhost -p 5432 -U praktikan -d ecommerce_restore -v ecommerce_full.dump
+\end{lstlisting}
+
+\subsubsection{Restore Tabel Tertentu}
+\begin{lstlisting}[language=bash]
+	# Restore hanya tabel orders dari backup custom
+	pg_restore -h localhost -p 5432 -U praktikan -d ecommerce_restore -t orders -v ecommerce_full.dump
+\end{lstlisting}
+
+\subsection{Physical Backup}
+Physical backup melibatkan penyalinan langsung file data PostgreSQL. Dalam container Docker, kita bisa menggunakan volume untuk menyimpan data:
+
+\begin{lstlisting}[language=bash]
+	# Stop container
+	docker-compose stop postgres
+	
+	# Backup volume
+	docker run --rm -v postgres_praktikum_postgres_data:/source -v $(pwd)/backup:/backup ubuntu tar -czf /backup/postgres_data_backup.tar.gz -C /source .
+	
+	# Start container kembali
+	docker-compose start postgres
+\end{lstlisting}
+
+\subsection{Continuous Archiving dan Point-in-Time Recovery (PITR)}
+Untuk mengimplementasikan Continuous Archiving, kita perlu mengkonfigurasi PostgreSQL untuk menyimpan Write-Ahead Logs (WAL):
+
+\subsubsection{Konfigurasi WAL Archiving}
+Edit file \texttt{postgresql.conf}:
+
+\begin{lstlisting}
+	wal_level = replica
+	archive_mode = on
+	archive_command = 'cp %p /var/lib/postgresql/data/archive/%f'
+\end{lstlisting}
+
+\subsubsection{Point-in-Time Recovery}
+\begin{lstlisting}[language=bash]
+	# Buat base backup
+	pg_basebackup -h localhost -p 5432 -U praktikan -D /backup/base -Fp -Xs -P
+	
+	# Restore ke titik waktu tertentu
+	# (Memerlukan recovery.conf)
+\end{lstlisting}
+
+\subsection{Demonstrasi Skenario Disaster}
+Pada bagian ini, kita akan mensimulasikan skenario kehilangan data dan melakukan recovery:
+
+\subsubsection{Simulasi Kehilangan Data}
+\begin{lstlisting}[language=SQL]
+	-- Buat tabel untuk demonstrasi
+	CREATE TABLE important_data (
+		id SERIAL PRIMARY KEY,
+		description TEXT,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	
+	-- Insert data penting
+	INSERT INTO important_data (description) VALUES ('Data sangat penting #1');
+	INSERT INTO important_data (description) VALUES ('Data sangat penting #2');
+	INSERT INTO important_data (description) VALUES ('Data sangat penting #3');
+	
+	-- Backup
+	-- (Jalankan pg_dump seperti di atas)
+	
+	-- Simulasi kesalahan
+	DROP TABLE important_data;
+	
+	-- Restore
+	-- (Jalankan pg_restore seperti di atas)
+\end{lstlisting}
+
+\subsubsection{Simulasi Corrupt Database}
+\begin{lstlisting}[language=bash]
+	# Backup terlebih dahulu
+	# (Jalankan backup)
+	
+	# Simulasi korupsi (hati-hati!)
+	docker-compose exec postgres bash -c "dd if=/dev/urandom of=/var/lib/postgresql/data/base/16384/1234 bs=8192 count=1 conv=notrunc"
+	
+	# Restart PostgreSQL (kemungkinan akan gagal start)
+	docker-compose restart postgres
+	
+	# Restore dari backup
+	# (Jalankan restore)
+\end{lstlisting}
+
+\subsection{Strategi Backup yang Baik}
+Berdasarkan praktik terbaik, berikut adalah strategi backup yang direkomendasikan:
+\begin{enumerate}
+	\item Full backup setiap minggu
+	\item Differential backup setiap hari
+	\item Continuous archiving untuk recovery point-in-time
+	\item Replikasi untuk high availability
+\end{enumerate}
+
+\subsection{Implementasi High Availability dengan Replikasi}
+Meskipun bukan bagian dari backup/recovery secara tradisional, replikasi membantu memastikan ketersediaan data:
+
+\begin{lstlisting}
+	# Primary server (postgresql.conf)
+	wal_level = replica
+	max_wal_senders = 10
+	wal_keep_segments = 64
+	
+	# Standby server (postgresql.conf)
+	hot_standby = on
+	
+	# Standby server (recovery.conf)
+	standby_mode = 'on'
+	primary_conninfo = 'host=primary port=5432 user=replicator password=password'
+	trigger_file = '/tmp/postgresql.trigger'
+\end{lstlisting}
+
+\section{Tugas Praktikum}
+
+\begin{enumerate}
+    \item Lakukan backup database dengan minimal 3 metode berbeda:
+    \begin{itemize}
+        \item Full database backup dengan pg\_dump
+        \item Backup tabel tertentu
+        \item Backup struktur saja
+    \end{itemize}
+    
+    \item Simulasikan skenario kehilangan data dan lakukan recovery dari backup:
+    \begin{itemize}
+        \item Menghapus tabel penting secara tidak sengaja
+        \item Menghapus beberapa baris data
+        \item Menghapus database
+    \end{itemize}
+    
+    \item Buat script otomatisasi backup yang berjalan terjadwal:
+    \begin{itemize}
+        \item Menggunakan cron job atau scheduled tasks
+        \item Menyimpan backup dengan timestamp
+        \item Menghapus backup lama secara otomatis
+    \end{itemize}
+    
+    \item Buat laporan yang menjelaskan strategi backup dan recovery yang tepat untuk database dengan karakteristik:
+    \begin{itemize}
+        \item Data transaksi finansial yang kritikal
+        \item Data logging dengan volume tinggi
+        \item Data referensi yang jarang berubah
+    \end{itemize}
+\end{enumerate}
+
+\section{Pertanyaan Diskusi}
+
+\begin{enumerate}
+    \item Apa kelebihan dan kekurangan masing-masing metode backup (logical vs physical vs continuous archiving)?
+    
+    \item Bagaimana strategi backup yang tepat untuk database dengan ukuran sangat besar (>1TB)?
+    
+    \item Apa trade-off antara keamanan data (durability) dengan performa database?
+    
+    \item Bagaimana cara menghitung Recovery Point Objective (RPO) dan Recovery Time Objective (RTO) untuk database?
+    
+    \item Apa saja pertimbangan saat merancang strategi disaster recovery untuk database produksi?
+\end{enumerate}
+
+\section{Referensi}
+
+\begin{itemize}
+    \item \href{https://www.postgresql.org/docs/current/backup.html}{PostgreSQL Documentation: Backup and Restore}
+    \item \href{https://www.postgresql.org/docs/current/continuous-archiving.html}{PostgreSQL: Continuous Archiving and PITR}
+    \item \href{https://www.postgresql.org/docs/current/high-availability.html}{PostgreSQL: High Availability}
+    \item \href{https://wiki.postgresql.org/wiki/Backup_in_practice}{PostgreSQL Wiki: Backup in Practice}
+    \item \href{https://www.postgresql.org/docs/current/app-pgdump.html}{PostgreSQL: pg\_dump}
+    \item \href{https://www.postgresql.org/docs/current/app-pgrestore.html}{PostgreSQL: pg\_restore}
+\end{itemize}
