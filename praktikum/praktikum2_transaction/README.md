@@ -10,6 +10,17 @@ Pada praktikum ini, kita akan mempelajari implementasi transaksi (transaction) p
 4. Menganalisis fenomena konkurensi seperti dirty read, non-repeatable read, dan phantom read
 5. Mengimplementasikan strategi penanganan konkurensi tinggi
 
+## Troubleshoot
+
+1. Jika anda mengalami error duplicate key, anda bisa cek sequence id pada tabel tersebut kemudian reset ke max dari id tabel tersebut
+
+```sql
+-- tableName_columnName_seq
+SELECT currval('orders_order_id_seq');
+-- untuk reset
+SELECT setval('orders_order_id_seq', (SELECT MAX(order_id) FROM orders));
+```
+
 ## Tahapan Praktikum
 
 ### 1. Persiapan
@@ -23,6 +34,7 @@ Pada praktikum ini, kita akan mempelajari implementasi transaksi (transaction) p
 Transaksi adalah unit kerja yang mengubah data dari satu state ke state lainnya. Semua perubahan dalam transaksi harus berhasil secara lengkap, atau tidak ada yang dilakukan (all-or-nothing).
 
 Empat properti ACID:
+
 - **Atomicity** (Atomisitas): Transaksi harus dijalankan sepenuhnya atau dibatalkan sepenuhnya
 - **Consistency** (Konsistensi): Transaksi harus menjaga integritas data
 - **Isolation** (Isolasi): Transaksi tidak boleh saling mempengaruhi
@@ -47,6 +59,7 @@ ROLLBACK;
 ### 4. Demonstrasi Tingkat Isolasi Transaksi
 
 PostgreSQL mendukung tingkat isolasi berikut:
+
 - READ UNCOMMITTED (sama dengan READ COMMITTED di PostgreSQL)
 - READ COMMITTED (default)
 - REPEATABLE READ
@@ -55,6 +68,7 @@ PostgreSQL mendukung tingkat isolasi berikut:
 #### 4.1 READ COMMITTED
 
 Terminal 1:
+
 ```sql
 BEGIN;
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
@@ -65,6 +79,7 @@ COMMIT;
 ```
 
 Terminal 2:
+
 ```sql
 BEGIN;
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
@@ -80,6 +95,7 @@ COMMIT;
 #### 4.2 REPEATABLE READ
 
 Terminal 1:
+
 ```sql
 BEGIN;
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
@@ -92,6 +108,7 @@ COMMIT;
 ```
 
 Terminal 2:
+
 ```sql
 BEGIN;
 UPDATE bank_accounts SET balance = balance - 1000000 WHERE account_id = 1;
@@ -101,6 +118,7 @@ COMMIT;
 #### 4.3 SERIALIZABLE
 
 Terminal 1:
+
 ```sql
 BEGIN;
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
@@ -113,9 +131,10 @@ COMMIT;
 ```
 
 Terminal 2:
+
 ```sql
 BEGIN;
-INSERT INTO bank_accounts (customer_id, balance) 
+INSERT INTO bank_accounts (customer_id, balance)
 VALUES (1, 5000000);
 COMMIT;
 ```
@@ -144,12 +163,12 @@ COMMIT;
 ```sql
 -- Menggunakan last_updated sebagai version control
 BEGIN;
-SELECT product_id, stock_quantity, last_updated 
+SELECT product_id, stock_quantity, last_updated
 FROM products WHERE product_id = 1;
 
 -- Asumsikan kita mendapatkan last_updated = '2023-07-15 10:00:00'
-UPDATE products 
-SET stock_quantity = stock_quantity - 5, 
+UPDATE products
+SET stock_quantity = stock_quantity - 5,
     last_updated = CURRENT_TIMESTAMP
 WHERE product_id = 1 AND last_updated = '2023-07-15 10:00:00';
 
@@ -183,6 +202,7 @@ bash benchmark.sh ../praktikum/praktikum2_transaction/transfer_money.sql 20 100 
 ## Tugas
 
 1. Implementasikan sistem pemesanan produk dengan transaksi yang:
+
    - Mengurangi stok produk
    - Membuat pesanan baru
    - Menambahkan item pesanan
@@ -190,10 +210,12 @@ bash benchmark.sh ../praktikum/praktikum2_transaction/transfer_money.sql 20 100 
    - Harus ACID-compliant
 
 2. Implementasikan dua strategi konkurensi berbeda dan bandingkan performanya:
+
    - Row-level locking (pessimistic)
    - Optimistic concurrency control
 
 3. Lakukan pengujian konkurensi tinggi (minimal 20 koneksi simultan) dan analisis:
+
    - Throughput (transactions per second)
    - Deadlock yang terjadi (jika ada)
    - Kesalahan konkurensi lainnya
