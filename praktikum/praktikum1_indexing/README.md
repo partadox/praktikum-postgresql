@@ -113,7 +113,19 @@ CREATE INDEX idx_orders_customer_id ON orders(customer_id);
 
 ### 5. Mengukur Performa Setelah Indexing
 
-1. Lakukan benchmark konkuren dengan index:
+1. Jalankan kembali query EXPLAIN yang sama dan bandingkan waktu eksekusinya:
+
+```sql
+-- Menampilkan execution plan
+EXPLAIN SELECT * FROM products WHERE category = 'Elektronik';
+
+-- Menampilkan execution plan beserta runtime
+EXPLAIN ANALYZE SELECT * FROM products WHERE category = 'Elektronik';
+
+-- bisa uji coba query lainnya
+```
+
+2. Lakukan benchmark konkuren dengan index:
 
 ```bash
 # Di terminal
